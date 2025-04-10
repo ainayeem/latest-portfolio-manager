@@ -5,7 +5,7 @@ import { getAllProjects } from "@/services/project";
 const ProjectsPage = async () => {
   const { data } = await getAllProjects();
   const projects = data ?? [];
-  console.log("🚀 ~ ProjectsPage ~ projects:", projects);
+  // console.log("🚀 ~ ProjectsPage ~ projects:", projects);
 
   return (
     <div className="w-full">

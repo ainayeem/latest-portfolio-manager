@@ -5,7 +5,7 @@ import { getProjectById } from "@/services/project";
 const ProjectDetailsPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const { data: project } = await getProjectById(id);
-  console.log("🚀 ~ ProjectDetailsPage ~ project:", project);
+  // console.log("🚀 ~ ProjectDetailsPage ~ project:", project);
 
   return (
     <>

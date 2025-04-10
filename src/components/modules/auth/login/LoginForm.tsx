@@ -27,7 +27,7 @@ const LoginForm = () => {
     // console.log("🚀 ~ constonSubmit:SubmitHandler<FieldValues>= ~ data:", data);
     try {
       const response = await loginAdmin(data);
-      console.log("🚀 ~ constonSubmit:SubmitHandler<FieldValues>= ~ response:", response);
+      // console.log("🚀 ~ constonSubmit:SubmitHandler<FieldValues>= ~ response:", response);
 
       if (response?.success) {
         toast.success(response?.message);

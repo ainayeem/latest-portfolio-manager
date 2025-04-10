@@ -1,5 +1,4 @@
 import ContactDetails from "@/components/modules/contacts/contactDetails";
-import SectionTitle from "@/components/shared/SectionTitle";
 import { getContactById } from "@/services/contact";
 
 const ContactDetailsPage = async ({ params }: { params: Promise<{ id: string }> }) => {
@@ -8,7 +7,7 @@ const ContactDetailsPage = async ({ params }: { params: Promise<{ id: string }> 
 
   return (
     <>
-      <SectionTitle title="Contact Details" />
+      {/* <SectionTitle title="Contact Details" /> */}
       <ContactDetails contact={contact} />
     </>
   );

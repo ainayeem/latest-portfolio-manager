@@ -8,13 +8,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { addProject } from "@/services/project";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { Fragment } from "react";
+import { useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { projectSchema } from "./project.validation";
 
 export default function AddProjectForm() {
   const router = useRouter();
+  const [techInput, setTechInput] = useState("");
+  const techSuggestions = [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Next.js",
+    "Node.js",
+    "Express",
+    "MongoDB",
+    "PostgreSQL",
+    "Tailwind CSS",
+    "Shadcn/ui",
+  ];
+
   const form = useForm({
     resolver: zodResolver(projectSchema),
     defaultValues: {
@@ -33,33 +47,16 @@ export default function AddProjectForm() {
   });
 
   const roles = [
-    { value: "frontend", label: "Frontend Developer" },
-    { value: "backend", label: "Backend Developer" },
-    { value: "fullstack", label: "Full-Stack Developer" },
-    { value: "ui-ux", label: "UI/UX Designer" },
-  ];
-
-  const technologies = [
-    { value: "javascript", label: "Javascript" },
-    { value: "typescript", label: "Typescript" },
-    { value: "react", label: "React" },
-    { value: "nextJs", label: "Next.js" },
-    { value: "redux", label: "Redux" },
-    { value: "mongodb", label: "MongoDB" },
-    { value: "mongoose", label: "Mongoose" },
-    { value: "prisma", label: "Prisma" },
-    { value: "postgreSql", label: "PostgreSQL" },
-    { value: "tailwindCss", label: "Tailwind Css" },
-    { value: "bootstrap", label: "Bootstrap" },
-    { value: "shadcnUi", label: "Shadcn/Ui" },
-    { value: "antDesign", label: "Ant Design" },
-    { value: "materialUi", label: "Material Ui" },
-    { value: "jwt", label: "Json Web Token" },
-    { value: "other", label: "other" },
+    { value: "frontend", label: "Frontend" },
+    { value: "backend", label: "Backend" },
+    { value: "fullstack", label: "Full-Stack" },
+    { value: "ui-ux", label: "UI/UX" },
   ];
 
   const {
     formState: { isSubmitting },
+    watch,
+    setValue,
   } = form;
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
@@ -73,262 +70,319 @@ export default function AddProjectForm() {
         toast.error(response?.message);
       }
     } catch {
-      toast.error("Something went wring!");
+      toast.error("Something went wrong!");
     }
   };
 
-  return (
-    <Fragment>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-4">
-            {/* title and thumbnail */}
-            <div className="flex flex-col xl:flex-row gap-5">
-              {/* title */}
-              <div className="flex-1">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Title <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Enter your project title" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+  const handleAddTechnology = () => {
+    if (techInput.trim() && !watch("technologiesUsed").includes(techInput.trim())) {
+      setValue("technologiesUsed", [...watch("technologiesUsed"), techInput.trim()]);
+      setTechInput("");
+    }
+  };
 
-              {/* thumbnail */}
-              <div className=" flex-1">
-                <FormField
-                  control={form.control}
-                  name="thumbnail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Thumbnail URL <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Enter thumbnail URL" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+  const handleRemoveTechnology = (techToRemove: string) => {
+    setValue(
+      "technologiesUsed",
+      watch("technologiesUsed").filter((tech) => tech !== techToRemove)
+    );
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-4 md:p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 md:p-8">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Add New Project</h1>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Title and Thumbnail */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Title */}
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Title <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter your project title" className="w-full mt-1" />
+                    </FormControl>
+                    <FormMessage className="text-xs text-red-500" />
+                  </FormItem>
+                )}
+              />
+
+              {/* Thumbnail */}
+              <FormField
+                control={form.control}
+                name="thumbnail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Thumbnail URL <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter thumbnail URL" className="w-full mt-1" />
+                    </FormControl>
+                    <FormMessage className="text-xs text-red-500" />
+                  </FormItem>
+                )}
+              />
             </div>
 
-            {/* description */}
+            {/* Description */}
             <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Description <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Textarea className="min-h-52" {...field} placeholder="Enter project description" />
+                    <Textarea className="min-h-40 w-full mt-1" {...field} placeholder="Enter project description" />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs text-red-500" />
                 </FormItem>
               )}
             />
 
-            <div className="flex flex-col xl:flex-row gap-5">
-              {/* project role */}
+            {/* Project stack */}
+            <FormField
+              control={form.control}
+              name="projectRole"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Project Stack <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full mt-1">
+                        <SelectValue placeholder="Select a Stack" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectGroup>
+                        {roles.map((role) => (
+                          <SelectItem key={role.value} value={role.value}>
+                            {role.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="text-xs text-red-500" />
+                </FormItem>
+              )}
+            />
 
-              <div className="flex-1">
-                <FormField
-                  control={form.control}
-                  name="projectRole"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Project Role <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a Role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            {roles.map((role) => (
-                              <SelectItem key={role.value} value={role.value}>
-                                {role.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* technologies used */}
-
+            {/* Technologies Used - Dynamic Input */}
             <div className="space-y-2">
-              <Label htmlFor="technologiesUsed" className="text-white">
-                Technologies Used<span className="text-red-500 ml-1">*</span>
+              <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Technologies Used <span className="text-red-500">*</span>
               </Label>
-              <select
-                className="w-full min-h-36 border-2 border-[#27272A]"
-                name="technologiesUsed"
-                multiple
-                value={form.watch("technologiesUsed")}
-                onChange={(e) =>
-                  form.setValue(
-                    "technologiesUsed",
-                    [...e.target.selectedOptions].map((o) => o.value)
-                  )
-                }
-                required
-              >
-                {technologies.map((tech) => (
-                  <option key={tech.value} value={tech.value} className="text-sm">
-                    {tech.label}
-                  </option>
+
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  value={techInput}
+                  onChange={(e) => setTechInput(e.target.value)}
+                  placeholder="Add a technology"
+                  className="flex-1"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddTechnology();
+                    }
+                  }}
+                />
+                <Button type="button" onClick={handleAddTechnology} variant="outline" className="shrink-0">
+                  Add
+                </Button>
+              </div>
+
+              {/* Technology suggestions */}
+              <div className="flex flex-wrap gap-2 mt-2">
+                {techSuggestions.map((tech) => (
+                  <button
+                    key={tech}
+                    type="button"
+                    onClick={() => {
+                      if (!watch("technologiesUsed").includes(tech)) {
+                        setValue("technologiesUsed", [...watch("technologiesUsed"), tech]);
+                      }
+                    }}
+                    className="text-xs px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                  >
+                    {tech}
+                  </button>
                 ))}
-              </select>
+              </div>
+
+              {/* Selected technologies */}
+              <div className="mt-4">
+                <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Selected Technologies</Label>
+                {watch("technologiesUsed").length === 0 ? (
+                  <p className="text-sm text-gray-500 dark:text-gray-400">No technologies added yet</p>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {watch("technologiesUsed").map((tech) => (
+                      <div
+                        key={tech}
+                        className="flex items-center gap-1 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200"
+                      >
+                        <span className="text-sm">{tech}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTechnology(tech)}
+                          className="text-indigo-500 dark:text-indigo-300 hover:text-indigo-700 dark:hover:text-indigo-100"
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <FormMessage className="text-xs text-red-500" />
             </div>
 
-            {/* key features */}
+            {/* Key Features */}
             <FormField
               control={form.control}
               name="keyFeatures"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Key Features <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
-                      className="min-h-20"
+                      className="min-h-24 w-full mt-1"
                       {...field}
                       placeholder="Enter key features (comma-separated)"
                       onChange={(e) => {
                         const value = e.target.value;
-                        form.setValue(
+                        setValue(
                           "keyFeatures",
                           value.split(",").map((item) => item.trim())
                         );
                       }}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs text-red-500" />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Separate each feature with a comma</p>
                 </FormItem>
               )}
             />
 
-            <div className="flex flex-col xl:flex-row gap-5">
-              {/* live link */}
-              <div className="flex-1">
+            {/* Links Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-800 dark:text-white">Project Links</h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Live Link */}
                 <FormField
                   control={form.control}
                   name="liveLink"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
+                      <FormLabel className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Live Link <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Enter live project link" />
+                        <Input {...field} placeholder="Enter live project link" className="w-full mt-1" />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs text-red-500" />
                     </FormItem>
                   )}
                 />
-              </div>
 
-              {/* frontend source code */}
-              <div className="flex-1">
+                {/* Frontend Source Code */}
                 <FormField
                   control={form.control}
                   name="frontendSourceCode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Frontend Source Code</FormLabel>
+                      <FormLabel className="block text-sm font-medium text-gray-700 dark:text-gray-300">Frontend Source Code</FormLabel>
                       <FormControl>
-                        <Input type="url" {...field} placeholder="Enter frontend source code URL" />
+                        <Input type="url" {...field} placeholder="Enter frontend source code URL" className="w-full mt-1" />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs text-red-500" />
                     </FormItem>
                   )}
                 />
               </div>
-            </div>
 
-            <div className="flex flex-col xl:flex-row gap-5">
-              {/* backend source code */}
-              <div className="flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Backend Source Code */}
                 <FormField
                   control={form.control}
                   name="backendSourceCode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Backend Source Code</FormLabel>
+                      <FormLabel className="block text-sm font-medium text-gray-700 dark:text-gray-300">Backend Source Code</FormLabel>
                       <FormControl>
-                        <Input type="url" {...field} placeholder="Enter backend source code URL" />
+                        <Input type="url" {...field} placeholder="Enter backend source code URL" className="w-full mt-1" />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs text-red-500" />
                     </FormItem>
                   )}
                 />
-              </div>
 
-              {/* api documentation */}
-              <div className="flex-1">
+                {/* API Documentation */}
                 <FormField
                   control={form.control}
                   name="apiDocumentation"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>API Documentation</FormLabel>
+                      <FormLabel className="block text-sm font-medium text-gray-700 dark:text-gray-300">API Documentation</FormLabel>
                       <FormControl>
-                        <Input type="url" {...field} placeholder="Enter API documentation URL" />
+                        <Input type="url" {...field} placeholder="Enter API documentation URL" className="w-full mt-1" />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs text-red-500" />
                     </FormItem>
                   )}
                 />
               </div>
             </div>
 
-            {/* featured */}
+            {/* Featured Project */}
             <FormField
               control={form.control}
               name="isFeatured"
               render={({ field }) => (
-                <FormItem className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={field.value || false}
-                    onChange={(e) => field.onChange(e.target.checked)}
-                    onBlur={field.onBlur}
-                    ref={field.ref}
-                    className="h-4 w-4"
-                  />
-                  <FormLabel className="text-sm">Featured Project</FormLabel>
-                  <FormMessage />
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4 border border-gray-200 dark:border-gray-700">
+                  <FormControl>
+                    <input
+                      type="checkbox"
+                      checked={field.value || false}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                      className="h-4 w-4 mt-1 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 rounded"
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-sm font-medium text-gray-700 dark:text-gray-300">Featured Project</FormLabel>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Check this box to highlight this project in your portfolio</p>
+                  </div>
                 </FormItem>
               )}
             />
 
-            {/* submit button */}
-            <Button type="submit" className="cursor-pointer" disabled={isSubmitting}>
-              Add Project
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </Fragment>
+            {/* Submit Button */}
+            <div className="flex justify-end">
+              <Button type="submit" className="px-6 py-3" disabled={isSubmitting}>
+                {isSubmitting ? "Adding..." : "Add Project"}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
 import { logoutFromCookie } from "@/services/auth";
-import { Award, Book, Edit, FilePlus, Folder, Home, LogOut, Users } from "lucide-react";
+import { Award, Book, Folder, Home, LogOut, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import SidebarGroupComponent from "./sideBarGroupComponent";
@@ -12,46 +12,46 @@ import { Button } from "./ui/button";
 
 const application = [
   {
-    title: "Home",
+    title: "Dashboard",
     url: "/",
     icon: Home,
   },
 ];
 
 const project = [
+  // {
+  //   title: "Create Project",
+  //   url: "/projects/create-project",
+  //   icon: FilePlus,
+  // },
   {
-    title: "Create Project",
-    url: "/projects/create-project",
-    icon: FilePlus,
-  },
-  {
-    title: "Projects",
+    title: "Manage Projects",
     url: "/projects",
     icon: Folder,
   },
 ];
 
 const skill = [
+  // {
+  //   title: "Create Skill",
+  //   url: "/skills/create-skill",
+  //   icon: FilePlus,
+  // },
   {
-    title: "Create Skill",
-    url: "/skills/create-skill",
-    icon: FilePlus,
-  },
-  {
-    title: "Skills",
+    title: "Manage Skills",
     url: "/skills",
     icon: Award,
   },
 ];
 
 const blog = [
+  // {
+  //   title: "Create Blog",
+  //   url: "/blogs/create-blog",
+  //   icon: Edit,
+  // },
   {
-    title: "Create Blog",
-    url: "/blogs/create-blog",
-    icon: Edit,
-  },
-  {
-    title: "Blogs",
+    title: "Manage Blogs",
     url: "/blogs",
     icon: Book,
   },
@@ -59,7 +59,7 @@ const blog = [
 
 const contact = [
   {
-    title: "Contacts",
+    title: "Manage Contacts",
     url: "/contacts",
     icon: Users,
   },

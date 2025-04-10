@@ -1,5 +1,4 @@
 import UpdateProjectForm from "@/components/modules/projects/updateProject";
-import SectionTitle from "@/components/shared/SectionTitle";
 import { getProjectById } from "@/services/project";
 
 const UpdateProjectPage = async ({ params }: { params: Promise<{ id: string }> }) => {
@@ -8,7 +7,7 @@ const UpdateProjectPage = async ({ params }: { params: Promise<{ id: string }> }
 
   return (
     <>
-      <SectionTitle title="Update Project" />
+      {/* <SectionTitle title="Update Project" /> */}
       <UpdateProjectForm project={project} />
     </>
   );

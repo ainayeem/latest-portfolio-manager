@@ -79,7 +79,7 @@ export const deleteSkillById = async (id: string) => {
     });
     revalidateTag("SKILL");
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error: any) {
     throw new Error(error);
